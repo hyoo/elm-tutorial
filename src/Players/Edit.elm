@@ -8,11 +8,11 @@ import Routing exposing (playersPath)
 import Html.Events exposing (onClick)
 
 
-view : Player -> Html Msg
-view model =
+view : Models.Model -> Player -> Html Msg
+view model player =
     div []
-        [ nav model
-        , form model
+        [ nav player
+        , form player
         ]
 
 

@@ -6,6 +6,7 @@ import Routing exposing (parseLocation)
 import Navigation exposing (newUrl)
 import Commands exposing (savePlayerCmd)
 import RemoteData
+import Material
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -36,6 +37,9 @@ update msg model =
 
         Msgs.OnPlayerSave (Err player) ->
             ( model, Cmd.none )
+
+        Msgs.Mdl msg_ ->
+            Material.update Msgs.Mdl msg_ model
 
 
 updatePlayer : Model -> Player -> Model

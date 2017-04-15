@@ -4,6 +4,11 @@ import Models exposing (Player)
 import Navigation exposing (Location)
 import RemoteData exposing (WebData)
 import Http
+import Material
+
+
+type alias Mdl =
+    Material.Model
 
 
 type Msg
@@ -12,3 +17,4 @@ type Msg
     | OnLocationChange Location
     | ChangeLevel Player Int
     | OnPlayerSave (Result Http.Error Player)
+    | Mdl (Material.Msg Msg)

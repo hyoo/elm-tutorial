@@ -3,23 +3,24 @@ module View exposing (..)
 import Html exposing (Html, div, text)
 import Msgs exposing (Msg)
 import Models exposing (Model, PlayerId)
-import Models exposing (Model)
 import Players.List
 import Players.Edit
 import RemoteData
+import Material.Scheme
 
 
 view : Model -> Html Msg
 view model =
     div []
         [ page model ]
+        |> Material.Scheme.top
 
 
 page : Model -> Html Msg
 page model =
     case model.route of
         Models.PlayersRoute ->
-            Players.List.view model.players
+            Players.List.view model
 
         Models.PlayerRoute id ->
             playerEditPage model id
@@ -46,7 +47,7 @@ playerEditPage model playerId =
             in
                 case maybePlayer of
                     Just player ->
-                        Players.Edit.view player
+                        Players.Edit.view model player
 
                     Nothing ->
                         notFoundView

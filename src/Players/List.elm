@@ -1,32 +1,30 @@
 module Players.List exposing (..)
 
 import Html exposing (..)
-import Html.Attributes exposing (class, href)
 import Msgs exposing (Msg)
 import Models exposing (Player)
 import RemoteData exposing (WebData)
 import Routing exposing (playerPath)
+import Material.Card as Card
+import Material.Table as Table
+import Material.Button as Button
+import Material.Options exposing (css)
+import Material.Color as Color
 
 
--- view : List Player -> Html Msg
--- view players =
---     div []
---         [ nav
---         , list players
---         ]
-
-
-view : WebData (List Player) -> Html Msg
-view response =
-    div []
-        [ nav
-        , maybeList response
+view : Models.Model -> Html Msg
+view model =
+    Card.view [ css "width" "100%" ]
+        [ Card.title
+            [ Color.background (Color.color Color.Grey Color.S500) ]
+            [ Card.head [ Color.text Color.white ] [ text "Players" ] ]
+        , Card.text [] [ maybeList model ]
         ]
 
 
-maybeList : WebData (List Player) -> Html Msg
-maybeList response =
-    case response of
+maybeList : Models.Model -> Html Msg
+maybeList model =
+    case model.players of
         RemoteData.NotAsked ->
             text ""
 
@@ -34,7 +32,7 @@ maybeList response =
             text "Loading..."
 
         RemoteData.Success players ->
-            list players
+            list players model
 
         RemoteData.Failure error ->
             text (toString error)
@@ -42,48 +40,49 @@ maybeList response =
 
 nav : Html Msg
 nav =
-    div [ class "clearfix mb2 white bg-black" ]
-        [ div [ class "left p2" ] [ text "Players" ] ]
+    Card.view
+        [ css "width" "100%"
+        , Color.background (Color.color Color.Grey Color.S500)
+        ]
+        [ Card.title [] [ Card.head [ Color.text Color.white ] [ text "Players" ] ]
+        ]
 
 
-list : List Player -> Html Msg
-list players =
-    div [ class "p2" ]
-        [ table []
-            [ thead []
-                [ tr []
-                    [ th [] [ text "Id" ]
-                    , th [] [ text "Name" ]
-                    , th [] [ text "Level" ]
-                    , th [] [ text "Actions" ]
-                    ]
+list : List Player -> Models.Model -> Html Msg
+list players model =
+    Table.table []
+        [ Table.thead []
+            [ Table.tr []
+                [ Table.th [] [ text "Id" ]
+                , Table.th [] [ text "Name" ]
+                , Table.th [] [ text "Level" ]
+                , Table.th [] [ text "Actions" ]
                 ]
-            , tbody [] (List.map playerRow players)
             ]
+        , Table.tbody [] (List.map (playerRow model) players)
         ]
 
 
-playerRow : Player -> Html Msg
-playerRow player =
-    tr []
-        [ td [] [ text player.id ]
-        , td [] [ text player.name ]
-        , td [] [ text (toString player.level) ]
-        , td [] [ editBtn player ]
+playerRow : Models.Model -> Player -> Html Msg
+playerRow model player =
+    Table.tr []
+        [ Table.td [] [ text player.id ]
+        , Table.td [] [ text player.name ]
+        , Table.td [] [ text (toString player.level) ]
+        , Table.td [] [ editBtn model player ]
         ]
 
 
-editBtn : Player -> Html.Html Msg
-editBtn player =
+editBtn : Models.Model -> Player -> Html Msg
+editBtn model player =
     let
         path =
             playerPath player.id
     in
-        a
-            [ class "btn regular"
-            , href path
-              -- , Routing.onLinkClick (Msgs.ChangeLocation path)
+        Button.render Msgs.Mdl
+            [ 0 ]
+            model.mdl
+            [ Material.Options.onClick (Msgs.ChangeLocation path)
+            , Button.raised
             ]
-            [ i [ class "fa fa-pencil mr1" ] []
-            , text "Edit"
-            ]
+            [ text "Edit" ]
