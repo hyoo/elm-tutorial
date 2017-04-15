@@ -50,7 +50,7 @@ nav =
 
 list : List Player -> Models.Model -> Html Msg
 list players model =
-    Table.table []
+    Table.table [ css "width" "600px" ]
         [ Table.thead []
             [ Table.tr []
                 [ Table.th [] [ text "Id" ]

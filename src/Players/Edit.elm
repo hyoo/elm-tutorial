@@ -1,71 +1,80 @@
 module Players.Edit exposing (..)
 
 import Html exposing (..)
-import Html.Attributes exposing (class, value, href)
 import Msgs exposing (Msg)
 import Models exposing (Player)
 import Routing exposing (playersPath)
-import Html.Events exposing (onClick)
+import Material.Card as Card
+import Material.Button as Button
+import Material.Icon as Icon
+import Material.Options
+import Material.Elevation as Elevation
+import Material.Grid exposing (grid, cell, size, Device(..))
 
 
 view : Models.Model -> Player -> Html Msg
 view model player =
-    div []
-        [ nav player
-        , form player
+    Card.view
+        [ Material.Options.css "width" "600px"
+        , Material.Options.css "flex-grow" "1"
+        , Elevation.e2
+        ]
+        [ Card.title [] [ Card.head [] [ text player.name ] ]
+        , Card.text [] [ formLevel model player ]
+        , Card.actions [ Card.border ] [ listBtn model ]
         ]
 
 
-nav : Player -> Html Msg
-nav model =
-    div [ class "clearfix mb2 white bg-black p1" ]
-        [ listBtn ]
-
-
-form : Player -> Html Msg
-form player =
-    div [ class "m3" ]
-        [ h1 [] [ text player.name ]
-        , formLevel player
-        ]
-
-
-formLevel : Player -> Html Msg
-formLevel player =
-    div
-        [ class "clearfix py1" ]
-        [ div [ class "col col-5" ] [ text "Level" ]
-        , div [ class "col col-7" ]
-            [ span [ class "h2 bold" ] [ text (toString player.level) ]
-            , btnLevelDecrease player
-            , btnLevelIncrease player
+formLevel : Models.Model -> Player -> Html Msg
+formLevel model player =
+    grid []
+        [ cell [ size All 3 ] [ text "Level" ]
+        , cell [ size All 4 ] [ text (toString player.level) ]
+        , cell [ size All 5 ]
+            [ btnLevelDecrease model player
+            , btnLevelIncrease model player
             ]
         ]
 
 
-btnLevelDecrease : Player -> Html Msg
-btnLevelDecrease player =
+btnLevelDecrease : Models.Model -> Player -> Html Msg
+btnLevelDecrease model player =
     let
         message =
             Msgs.ChangeLevel player -1
     in
-        a [ class "btn ml1 h1", onClick message ]
-            [ i [ class "fa fa-minus-circle" ] [] ]
+        Button.render Msgs.Mdl
+            [ 0 ]
+            model.mdl
+            [ Button.minifab
+            , Button.ripple
+            , Material.Options.onClick message
+            ]
+            [ Icon.i "remove" ]
 
 
-btnLevelIncrease : Player -> Html Msg
-btnLevelIncrease player =
+btnLevelIncrease : Models.Model -> Player -> Html Msg
+btnLevelIncrease model player =
     let
         message =
             Msgs.ChangeLevel player 1
     in
-        a [ class "btn ml1 h1", onClick message ]
-            [ i [ class "fa fa-plus-circle" ] [] ]
+        Button.render Msgs.Mdl
+            [ 1 ]
+            model.mdl
+            [ Button.minifab
+            , Button.ripple
+            , Material.Options.onClick message
+            ]
+            [ Icon.i "add" ]
 
 
-listBtn : Html Msg
-listBtn =
-    a [ class "btn regular", href playersPath ]
-        [ i [ class "fa fa-chevron-left mr1" ] []
-        , text "List"
+listBtn : Models.Model -> Html Msg
+listBtn model =
+    Button.render Msgs.Mdl
+        [ 2 ]
+        model.mdl
+        [ Material.Options.onClick (Msgs.ChangeLocation playersPath)
+        , Button.raised
         ]
+        [ text "List" ]
